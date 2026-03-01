@@ -1,0 +1,345 @@
+name: Build Xiaomi R3D Router Mode Firmware
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      openwrt_version:
+        description: 'OpenWrt Version'
+        required: true
+        default: '23.05.5'
+        type: choice
+        options:
+          - '23.05.5'
+          - '23.05.4'
+          - '23.05.3'
+
+env:
+  OPENWRT_VERSION: ${{ github.event.inputs.openwrt_version || '23.05.5' }}
+  TARGET: ipq806x
+  SUBTARGET: generic
+  PROFILE: xiaomi_r3d
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          git \
+          wget \
+          python3 \
+          python3-distutils \
+          libncurses5-dev \
+          libncursesw5-dev \
+          zlib1g-dev \
+          gawk \
+          gettext \
+          libssl-dev \
+          xsltproc \
+          rsync \
+          unzip \
+          file \
+          curl
+
+    - name: Download ImageBuilder
+      run: |
+        wget "https://downloads.openwrt.org/releases/${{ env.OPENWRT_VERSION }}/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/openwrt-imagebuilder-${{ env.OPENWRT_VERSION }}-${{ env.TARGET }}-${{ env.SUBTARGET }}.Linux-x86_64.tar.xz"
+        tar -xJf openwrt-imagebuilder-${{ env.OPENWRT_VERSION }}-${{ env.TARGET }}-${{ env.SUBTARGET }}.Linux-x86_64.tar.xz
+
+    - name: Prepare Configuration Files
+      run: |
+        cd openwrt-imagebuilder-${{ env.OPENWRT_VERSION }}-${{ env.TARGET }}-${{ env.SUBTARGET }}.Linux-x86_64
+        mkdir -p files/etc/config
+        mkdir -p files/etc/uci-defaults
+
+        # Network configuration - Router Mode
+        cat > files/etc/config/network << 'EOF'
+config interface 'loopback'
+    option device 'lo'
+    option proto 'static'
+    option ipaddr '127.0.0.1'
+    option netmask '255.0.0.0'
+
+config globals 'globals'
+    option ula_prefix 'auto'
+
+config interface 'wan'
+    option device 'eth0'
+    option proto 'dhcp'
+    option ipv6 'auto'
+
+config interface 'wan6'
+    option device '@wan'
+    option proto 'dhcpv6'
+
+config interface 'lan'
+    option device 'br-lan'
+    option proto 'static'
+    option ipaddr '192.168.1.1'
+    option netmask '255.255.255.0'
+    option ip6assign '60'
+
+config device
+    option name 'br-lan'
+    option type 'bridge'
+    list ports 'eth1'
+    list ports 'eth2'
+    list ports 'eth3'
+
+config dhcp 'lan'
+    option interface 'lan'
+    option start '100'
+    option limit '150'
+    option leasetime '12h'
+    option dhcpv4 'server'
+    option dhcpv6 'server'
+    option ra 'server'
+    list ra_flags 'managed-config'
+    list ra_flags 'other-config'
+
+config dhcp 'wan'
+    option interface 'wan'
+    option ignore '1'
+
+config odhcpd 'odhcpd'
+    option maindhcp '0'
+    option leasefile '/tmp/hosts/odhcpd'
+    option leasetrigger '/usr/sbin/odhcpd-update'
+    option loglevel '4'
+EOF
+
+        # Firewall configuration
+        cat > files/etc/config/firewall << 'EOF'
+config defaults
+    option syn_flood '1'
+    option input 'REJECT'
+    option output 'ACCEPT'
+    option forward 'REJECT'
+
+config zone
+    option name 'lan'
+    list network 'lan'
+    option input 'ACCEPT'
+    option output 'ACCEPT'
+    option forward 'ACCEPT'
+
+config zone
+    option name 'wan'
+    list network 'wan'
+    list network 'wan6'
+    option input 'REJECT'
+    option output 'ACCEPT'
+    option forward 'REJECT'
+    option masq '1'
+    option mtu_fix '1'
+
+config forwarding
+    option src 'lan'
+    option dest 'wan'
+
+config rule
+    option name 'Allow-DHCP-Renew'
+    option src 'wan'
+    option proto 'udp'
+    option dest_port '68'
+    option target 'ACCEPT'
+    option family 'ipv4'
+
+config rule
+    option name 'Allow-Ping'
+    option src 'wan'
+    option proto 'icmp'
+    option icmp_type 'echo-request'
+    option family 'ipv4'
+    option target 'ACCEPT'
+
+config include
+    option path '/etc/firewall.user'
+EOF
+
+        # System configuration
+        cat > files/etc/config/system << 'EOF'
+config system
+    option hostname 'Xiaomi-R3D'
+    option timezone 'CST-8'
+    option zonename 'Asia/Shanghai'
+    option ttylogin '0'
+    option log_size '64'
+    option urandom_seed '0'
+
+config timeserver 'ntp'
+    option enabled '1'
+    option enable_server '0'
+    list server 'ntp.aliyun.com'
+    list server 'time1.cloud.tencent.com'
+    list server 'cn.ntp.org.cn'
+EOF
+
+        # First boot script - Router Mode
+        cat > files/etc/uci-defaults/99-router-mode << 'EOF'
+#!/bin/sh
+sleep 3
+if [ ! -f /etc/.router_mode_configured ]; then
+    uci set system.@system[0].hostname='Xiaomi-R3D'
+    uci set system.@system[0].timezone='CST-8'
+    uci set system.@system[0].zonename='Asia/Shanghai'
+    
+    uci set network.wan=interface
+    uci set network.wan.proto='dhcp'
+    uci set network.wan.device='eth0'
+    uci set network.wan.ipv6='auto'
+    
+    uci set network.wan6=interface
+    uci set network.wan6.device='@wan'
+    uci set network.wan6.proto='dhcpv6'
+    
+    uci set network.lan.proto='static'
+    uci set network.lan.ipaddr='192.168.1.1'
+    uci set network.lan.netmask='255.255.255.0'
+    uci set network.lan.device='br-lan'
+    
+    uci set dhcp.lan.ignore='0'
+    uci set dhcp.lan.start='100'
+    uci set dhcp.lan.limit='150'
+    uci set dhcp.lan.leasetime='12h'
+    
+    uci set firewall.@zone[1].masq='1'
+    uci set firewall.@forwarding[0].src='lan'
+    uci set firewall.@forwarding[0].dest='wan'
+    
+    if [ -f /etc/config/wireless ]; then
+        uci set wireless.radio0.disabled='0'
+        uci set wireless.radio1.disabled='0'
+        uci set wireless.@wifi-iface[0].ssid='Xiaomi_R3D_5G'
+        uci set wireless.@wifi-iface[0].encryption='psk2'
+        uci set wireless.@wifi-iface[0].key='12345678'
+        uci set wireless.@wifi-iface[1].ssid='Xiaomi_R3D_2.4G'
+        uci set wireless.@wifi-iface[1].encryption='psk2'
+        uci set wireless.@wifi-iface[1].key='12345678'
+        uci commit wireless
+    fi
+    
+    uci commit system
+    uci commit network
+    uci commit dhcp
+    uci commit firewall
+    
+    passwd -d root
+    
+    # 配置中科大镜像源
+    cat > /etc/opkg/distfeeds.conf << 'OPKG_EOF'
+src/gz openwrt_core https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/targets/ipq806x/generic/packages
+src/gz openwrt_base https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/base
+src/gz openwrt_luci https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/luci
+src/gz openwrt_packages https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/packages
+src/gz openwrt_routing https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/routing
+OPKG_EOF
+    
+    touch /etc/.router_mode_configured
+    
+    /etc/init.d/system restart
+    /etc/init.d/network restart
+    /etc/init.d/firewall restart
+    /etc/init.d/dnsmasq restart
+fi
+EOF
+        chmod +x files/etc/uci-defaults/99-router-mode
+
+    - name: Build Firmware
+      run: |
+        cd openwrt-imagebuilder-${{ env.OPENWRT_VERSION }}-${{ env.TARGET }}-${{ env.SUBTARGET }}.Linux-x86_64
+        make image \
+          PROFILE="${{ env.PROFILE }}" \
+          PACKAGES="luci luci-i18n-base-zh-cn luci-theme-bootstrap dnsmasq-full firewall kmod-nft-offload iwinfo wireless-tools wpad-openssl kmod-ath10k-ct ath10k-firmware-qca9984-ct kmod-usb-storage kmod-usb2 kmod-usb3 block-mount e2fsprogs fdisk" \
+          FILES="files/" \
+          DISABLED_SERVICES=""
+
+    - name: Prepare Output
+      run: |
+        mkdir -p output
+        cd openwrt-imagebuilder-${{ env.OPENWRT_VERSION }}-${{ env.TARGET }}-${{ env.SUBTARGET }}.Linux-x86_64
+        cp -v bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/*-squashfs-sysupgrade.bin ../output/ 2>/dev/null || true
+        cp -v bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/*-squashfs-factory.bin ../output/ 2>/dev/null || true
+        cp -v bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/sha256sums ../output/ 2>/dev/null || true
+        
+        cd ../output
+        for f in *-squashfs-sysupgrade.bin; do
+          if [ -f "$f" ]; then
+            mv -v "$f" "openwrt-${{ env.OPENWRT_VERSION }}-r3d-router-mode-sysupgrade.bin"
+          fi
+        done
+
+    - name: Generate README
+      run: |
+        cat > output/README.md << 'EOF'
+        # 小米 R3D 路由模式固件
+
+        ## 默认配置
+        - LAN IP: 192.168.1.1
+        - WAN 模式: DHCP 客户端
+        - DHCP 服务器: 启用 (地址池: 192.168.1.100-250)
+        - WiFi SSID: Xiaomi_R3D_5G / Xiaomi_R3D_2.4G
+        - WiFi 密码: 12345678
+        - 管理密码: 空（首次登录无需密码）
+
+        ## 刷机步骤
+        1. 通过 SSH 登录原系统
+        2. 上传固件到 /tmp 目录
+        3. 执行: `sysupgrade -n /tmp/openwrt-${{ env.OPENWRT_VERSION }}-r3d-router-mode-sysupgrade.bin`
+        4. 等待重启完成（约 2-3 分钟）
+
+        ## 固件特点
+        - 预配置为路由模式
+        - 恢复出厂设置后保持路由模式
+        - 首次启动自动配置
+        - 内置中文语言包
+        - WiFi 默认启用
+        EOF
+
+    - name: Upload Firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: xiaomi-r3d-router-mode-firmware
+        path: output/*
+        retention-days: 30
+
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: r3d-router-mode-${{ env.OPENWRT_VERSION }}-${{ github.run_number }}
+        name: 小米 R3D 路由模式固件 ${{ env.OPENWRT_VERSION }}
+        body: |
+          ## 小米 R3D 路由模式固件
+          
+          ### 默认配置
+          - LAN IP: 192.168.1.1
+          - WAN 模式: DHCP 客户端
+          - DHCP 服务器: 启用
+          - WiFi: 默认启用
+          
+          ### 特点
+          - 预配置为路由模式
+          - 恢复出厂设置后保持路由模式
+          - 内置中文语言包
+          
+          ### 刷机
+          ```bash
+          sysupgrade -n /tmp/openwrt-${{ env.OPENWRT_VERSION }}-r3d-router-mode-sysupgrade.bin
+          ```
+        files: output/*
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
