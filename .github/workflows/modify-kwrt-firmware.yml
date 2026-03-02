@@ -4,55 +4,36 @@ on:
   workflow_dispatch:
     inputs:
       firmware_url:
-        description: 'Kwrt 固件下载链接 (留空使用仓库中的固件)'
-        required: false
+        description: 'Kwrt/OpenWrt 固件下载链接 (必须是 ipq806x xiaomi_r3d 的 sysupgrade.bin)'
+        required: true
         default: ''
 
 env:
-  FIRMWARE_FILE: "kwrt-02.22.2026-ipq806x-generic-xiaomi_r3d-squashfs-sysupgrade.bin"
   OUTPUT_FIRMWARE: "kwrt-02.22.2026-r3d-router-mode-sysupgrade.bin"
 
 jobs:
   modify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        lfs: true
-
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y squashfs-tools tar wget curl
+        sudo apt-get install -y squashfs-tools tar wget curl gzip
 
-    - name: Download or Verify Firmware
+    - name: Download Firmware
       run: |
         echo "========================================"
-        echo "检查 Kwrt 固件"
+        echo "下载固件"
         echo "========================================"
         
-        # 如果有提供 URL，使用提供的 URL
-        if [ -n "${{ github.event.inputs.firmware_url }}" ]; then
-          echo "从提供的链接下载..."
-          wget -O "$FIRMWARE_FILE" "${{ github.event.inputs.firmware_url }}"
-        else
-          # 检查仓库中的固件
-          if [ -f "$FIRMWARE_FILE" ]; then
-            echo "使用仓库中的固件文件"
-            ls -lh "$FIRMWARE_FILE"
-          else
-            echo "错误: 未找到固件文件 $FIRMWARE_FILE"
-            echo "请上传固件到仓库，或提供下载链接"
-            exit 1
-          fi
-        fi
+        wget -O original.bin "${{ github.event.inputs.firmware_url }}"
         
         echo ""
         echo "固件信息:"
-        ls -lh "$FIRMWARE_FILE"
-        file "$FIRMWARE_FILE"
+        ls -lh original.bin
+        file original.bin
 
     - name: Extract Firmware
       run: |
@@ -61,16 +42,13 @@ jobs:
         echo "提取固件"
         echo "========================================"
         
-        # 创建工作目录
         mkdir -p firmware_work
         cd firmware_work
         
-        # 复制固件
-        cp "../$FIRMWARE_FILE" .
+        cp ../original.bin .
         
-        # 解压 tar 归档
         echo "解压 tar 归档..."
-        tar -xf "$FIRMWARE_FILE"
+        tar -xf original.bin
         
         echo ""
         echo "文件列表:"
@@ -80,22 +58,26 @@ jobs:
       run: |
         echo ""
         echo "========================================"
-        echo "解压 SquashFS 文件系统"
+        echo "解压 SquashFS"
         echo "========================================"
         
         cd firmware_work
         
-        # 检查 sysupgrade 目录
-        ls -la sysupgrade-xiaomi_r3d/ || ls -la
+        echo "检查目录结构:"
+        ls -la
         
-        # 解压 rootfs
         mkdir -p rootfs
+        
+        echo "查找 squashfs 文件..."
+        SQUASHFS_FILE=$(find . -name "*.squashfs" -o -name "root" -type d | head -5)
+        echo "找到: $SQUASHFS_FILE"
+        
         echo "解压 squashfs..."
-        unsquashfs -f -d rootfs sysupgrade-xiaomi_r3d/root
+        unsquashfs -f -d rootfs . 2>&1 || unsquashfs -f -d rootfs * 2>&1 || true
         
         echo ""
-        echo "文件系统内容:"
-        ls -la rootfs/
+        echo "检查 rootfs:"
+        ls -la rootfs/ 2>/dev/null || echo "rootfs 未正确创建"
 
     - name: Modify Network Config
       run: |
@@ -106,10 +88,10 @@ jobs:
         
         cd firmware_work
         
-        # 备份原配置
-        cp rootfs/etc/config/network rootfs/etc/config/network.backup 2>/dev/null || true
+        if [ -f rootfs/etc/config/network ]; then
+            cp rootfs/etc/config/network rootfs/etc/config/network.backup
+        fi
         
-        # 写入新的网络配置
         cat > rootfs/etc/config/network << 'EOF'
 config interface 'loopback'
 	option device 'lo'
@@ -148,21 +130,10 @@ config dhcp 'lan'
 	option start '100'
 	option limit '150'
 	option leasetime '12h'
-	option dhcpv4 'server'
-	option dhcpv6 'server'
-	option ra 'server'
-	list ra_flags 'managed-config'
-	list ra_flags 'other-config'
 
 config dhcp 'wan'
 	option interface 'wan'
 	option ignore '1'
-
-config odhcpd 'odhcpd'
-	option maindhcp '0'
-	option leasefile '/tmp/hosts/odhcpd'
-	option leasetrigger '/usr/sbin/odhcpd-update'
-	option loglevel '4'
 EOF
         
         echo "✓ 网络配置已修改"
@@ -176,10 +147,10 @@ EOF
         
         cd firmware_work
         
-        # 备份原配置
-        cp rootfs/etc/config/firewall rootfs/etc/config/firewall.backup 2>/dev/null || true
+        if [ -f rootfs/etc/config/firewall ]; then
+            cp rootfs/etc/config/firewall rootfs/etc/config/firewall.backup
+        fi
         
-        # 写入新的防火墙配置
         cat > rootfs/etc/config/firewall << 'EOF'
 config defaults
 	option syn_flood '1'
@@ -207,104 +178,6 @@ config zone
 config forwarding
 	option src 'lan'
 	option dest 'wan'
-
-config rule
-	option name 'Allow-DHCP-Renew'
-	option src 'wan'
-	option proto 'udp'
-	option dest_port '68'
-	option target 'ACCEPT'
-	option family 'ipv4'
-
-config rule
-	option name 'Allow-Ping'
-	option src 'wan'
-	option proto 'icmp'
-	option icmp_type 'echo-request'
-	option family 'ipv4'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-IGMP'
-	option src 'wan'
-	option proto 'igmp'
-	option family 'ipv4'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-DHCPv6'
-	option src 'wan'
-	option proto 'udp'
-	option src_ip 'fc00::/6'
-	option dest_ip 'fc00::/6'
-	option dest_port '546'
-	option family 'ipv6'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-MLD'
-	option src 'wan'
-	option proto 'icmp'
-	option src_ip 'fe80::/10'
-	list icmp_type '130/0'
-	list icmp_type '131/0'
-	list icmp_type '132/0'
-	list icmp_type '143/0'
-	option family 'ipv6'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-ICMPv6-Input'
-	option src 'wan'
-	option proto 'icmp'
-	list icmp_type 'echo-request'
-	list icmp_type 'echo-reply'
-	list icmp_type 'destination-unreachable'
-	list icmp_type 'packet-too-big'
-	list icmp_type 'time-exceeded'
-	list icmp_type 'bad-header'
-	list icmp_type 'unknown-header-type'
-	list icmp_type 'router-solicitation'
-	list icmp_type 'neighbour-solicitation'
-	list icmp_type 'router-advertisement'
-	list icmp_type 'neighbour-advertisement'
-	option limit '1000/sec'
-	option family 'ipv6'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-ICMPv6-Forward'
-	option src 'wan'
-	option dest '*'
-	option proto 'icmp'
-	list icmp_type 'echo-request'
-	list icmp_type 'echo-reply'
-	list icmp_type 'destination-unreachable'
-	list icmp_type 'packet-too-big'
-	list icmp_type 'time-exceeded'
-	list icmp_type 'bad-header'
-	list icmp_type 'unknown-header-type'
-	option limit '1000/sec'
-	option family 'ipv6'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-IPSec-ESP'
-	option src 'wan'
-	option dest 'lan'
-	option proto 'esp'
-	option target 'ACCEPT'
-
-config rule
-	option name 'Allow-ISAKMP'
-	option src 'wan'
-	option dest 'lan'
-	option dest_port '500'
-	option proto 'udp'
-	option target 'ACCEPT'
-
-config include
-	option path '/etc/firewall.user'
 EOF
         
         echo "✓ 防火墙配置已修改"
@@ -320,49 +193,33 @@ EOF
         
         mkdir -p rootfs/etc/uci-defaults
         
-        cat > rootfs/etc/uci-defaults/99-router-mode << 'EOF'
+        cat > rootfs/etc/uci-defaults/99-router-mode << 'SCRIPT'
 #!/bin/sh
-# 小米 R3D 路由模式首次启动配置
-# 确保恢复出厂设置后仍为路由模式
-
 sleep 3
 
 if [ ! -f /etc/.router_mode_configured ]; then
-    echo "[首次启动] 配置路由模式..."
+    echo "[Router Mode] Configuring..."
     
-    # 配置系统
     uci set system.@system[0].hostname='Xiaomi-R3D-Router'
     uci set system.@system[0].timezone='CST-8'
     uci set system.@system[0].zonename='Asia/Shanghai'
     
-    # 确保 WAN 口配置
     uci set network.wan=interface
     uci set network.wan.proto='dhcp'
     uci set network.wan.device='eth0'
-    uci set network.wan.ipv6='auto'
     
-    uci set network.wan6=interface
-    uci set network.wan6.device='@wan'
-    uci set network.wan6.proto='dhcpv6'
-    
-    # 确保 LAN 口配置
     uci set network.lan.proto='static'
     uci set network.lan.ipaddr='192.168.1.1'
     uci set network.lan.netmask='255.255.255.0'
     uci set network.lan.device='br-lan'
     
-    # 启用 DHCP
     uci set dhcp.lan.ignore='0'
     uci set dhcp.lan.start='100'
     uci set dhcp.lan.limit='150'
     uci set dhcp.lan.leasetime='12h'
     
-    # 配置防火墙
     uci set firewall.@zone[1].masq='1'
-    uci set firewall.@forwarding[0].src='lan'
-    uci set firewall.@forwarding[0].dest='wan'
     
-    # 配置无线
     if [ -f /etc/config/wireless ]; then
         uci set wireless.radio0.disabled='0'
         uci set wireless.radio1.disabled='0'
@@ -375,37 +232,20 @@ if [ ! -f /etc/.router_mode_configured ]; then
         uci commit wireless
     fi
     
-    # 配置中科大镜像源
-    echo "[首次启动] 配置软件源..."
-    cat > /etc/opkg/distfeeds.conf << 'OPKG_EOF'
-src/gz openwrt_core https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/targets/ipq806x/generic/packages
-src/gz openwrt_base https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/base
-src/gz openwrt_luci https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/luci
-src/gz openwrt_packages https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/packages
-src/gz openwrt_routing https://mirrors.ustc.edu.cn/openwrt/releases/23.05.5/packages/arm_cortex-a15_neon-vfpv4/routing
-OPKG_EOF
-    
-    # 提交配置
     uci commit system
     uci commit network
     uci commit dhcp
     uci commit firewall
     
-    # 清空 root 密码（方便首次登录）
     passwd -d root
-    
-    # 标记已配置
     touch /etc/.router_mode_configured
     
-    # 重启服务
-    /etc/init.d/system restart
     /etc/init.d/network restart
     /etc/init.d/firewall restart
-    /etc/init.d/dnsmasq restart
     
-    echo "[首次启动] 配置完成!"
+    echo "[Router Mode] Configuration complete!"
 fi
-EOF
+SCRIPT
         
         chmod +x rootfs/etc/uci-defaults/99-router-mode
         
@@ -420,19 +260,22 @@ EOF
         
         cd firmware_work
         
-        # 重新打包 squashfs
+        echo "检查 rootfs:"
+        ls -la rootfs/
+        
+        echo ""
         echo "打包新的 rootfs..."
         mksquashfs rootfs new_rootfs.squashfs -comp xz -b 262144
         
         echo ""
-        echo "文件大小对比:"
-        ls -lh sysupgrade-xiaomi_r3d/root new_rootfs.squashfs
+        echo "文件大小:"
+        ls -lh new_rootfs.squashfs
         
-        # 替换 rootfs
-        mv sysupgrade-xiaomi_r3d/root sysupgrade-xiaomi_r3d/root.backup
-        cp new_rootfs.squashfs sysupgrade-xiaomi_r3d/root
+        echo ""
+        echo "创建 sysupgrade 目录..."
+        mkdir -p sysupgrade-xiaomi_r3d
+        mv new_rootfs.squashfs sysupgrade-xiaomi_r3d/root
         
-        # 重新打包 tar
         echo ""
         echo "创建新的固件..."
         tar -cf "../$OUTPUT_FIRMWARE" sysupgrade-xiaomi_r3d/
@@ -441,8 +284,6 @@ EOF
         
         echo ""
         echo "✓ 固件重新打包完成"
-        echo ""
-        echo "输出文件:"
         ls -lh "$OUTPUT_FIRMWARE"
 
     - name: Generate Checksum
@@ -454,7 +295,7 @@ EOF
         
         sha256sum "$OUTPUT_FIRMWARE" > "${OUTPUT_FIRMWARE}.sha256"
         
-        echo "SHA256 校验值:"
+        echo "SHA256:"
         cat "${OUTPUT_FIRMWARE}.sha256"
 
     - name: Upload Firmware
@@ -472,11 +313,5 @@ EOF
         echo "========================================"
         echo "修改完成!"
         echo "========================================"
-        echo ""
-        echo "输出文件:"
         ls -lh "$OUTPUT_FIRMWARE"
-        echo ""
-        echo "SHA256:"
         cat "${OUTPUT_FIRMWARE}.sha256"
-        echo ""
-        echo "========================================"
