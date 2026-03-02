@@ -39,7 +39,7 @@ jobs:
           git \
           wget \
           python3 \
-          python3-distutils \
+          python3-setuptools \
           libncurses5-dev \
           libncursesw5-dev \
           zlib1g-dev \
