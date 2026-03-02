@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       firmware_url:
-        description: 'Kwrt/OpenWrt 固件下载链接 (必须是 ipq806x xiaomi_r3d 的 sysupgrade.bin)'
+        description: 'Kwrt/OpenWrt 固件下载链接'
         required: true
-        default: ''
+        default: 'https://media.githubusercontent.com/media/liem0352/xiaomi-r3d-router-firmware/main/kwrt-02.22.2026-ipq806x-generic-xiaomi_r3d-squashfs-sysupgrade.bin'
 
 env:
   OUTPUT_FIRMWARE: "kwrt-02.22.2026-r3d-router-mode-sysupgrade.bin"
@@ -20,7 +20,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y squashfs-tools tar wget curl gzip
+        sudo apt-get install -y squashfs-tools tar wget curl gzip xz-utils
 
     - name: Download Firmware
       run: |
@@ -68,16 +68,12 @@ jobs:
         
         mkdir -p rootfs
         
-        echo "查找 squashfs 文件..."
-        SQUASHFS_FILE=$(find . -name "*.squashfs" -o -name "root" -type d | head -5)
-        echo "找到: $SQUASHFS_FILE"
-        
         echo "解压 squashfs..."
-        unsquashfs -f -d rootfs . 2>&1 || unsquashfs -f -d rootfs * 2>&1 || true
+        unsquashfs -f -d rootfs sysupgrade-xiaomi_r3d/root
         
         echo ""
         echo "检查 rootfs:"
-        ls -la rootfs/ 2>/dev/null || echo "rootfs 未正确创建"
+        ls -la rootfs/
 
     - name: Modify Network Config
       run: |
@@ -260,10 +256,6 @@ SCRIPT
         
         cd firmware_work
         
-        echo "检查 rootfs:"
-        ls -la rootfs/
-        
-        echo ""
         echo "打包新的 rootfs..."
         mksquashfs rootfs new_rootfs.squashfs -comp xz -b 262144
         
