@@ -54,7 +54,7 @@ jobs:
         cat rootfs/etc/config/firewall
 
     - name: Repack Firmware
-      run: cd firmware_work ; mksquashfs rootfs new_rootfs.squashfs -comp xz -b 262144 ; cp sysupgrade-xiaomi_r3d/root sysupgrade-xiaomi_r3d/root.original ; mv new_rootfs.squashfs sysupgrade-xiaomi_r3d/root ; tar -cf "../$OUTPUT_FIRMWARE" sysupgrade-xiaomi_r3d/ ; cd .. ; ls -lh "$OUTPUT_FIRMWARE"
+      run: cd firmware_work ; mksquashfs rootfs new_rootfs.squashfs -comp xz -b 1048576 -Xdict-size 100% -noappend -always-use-fragments ; cp sysupgrade-xiaomi_r3d/root sysupgrade-xiaomi_r3d/root.original ; mv new_rootfs.squashfs sysupgrade-xiaomi_r3d/root ; tar -cf "../$OUTPUT_FIRMWARE" sysupgrade-xiaomi_r3d/ ; cd .. ; ls -lh "$OUTPUT_FIRMWARE"
 
     - name: Generate Checksum
       run: sha256sum "$OUTPUT_FIRMWARE" > "${OUTPUT_FIRMWARE}.sha256" ; cat "${OUTPUT_FIRMWARE}.sha256"
@@ -62,7 +62,7 @@ jobs:
     - name: Upload Firmware
       uses: actions/upload-artifact@v4
       with:
-        name: kwrt-router-mode-firmware-v5
+        name: kwrt-router-mode-firmware-v6
         path: |
           ${{ env.OUTPUT_FIRMWARE }}
           ${{ env.OUTPUT_FIRMWARE }}.sha256
