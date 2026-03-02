@@ -63,7 +63,28 @@ jobs:
         cat rootfs/etc/uci-defaults/99-router-mode
 
     - name: Repack Firmware
-      run: cd firmware_work ; mksquashfs rootfs new_rootfs.squashfs -comp xz -b 1048576 -Xdict-size 100% -noappend -always-use-fragments ; cp sysupgrade-xiaomi_r3d/root sysupgrade-xiaomi_r3d/root.original ; mv new_rootfs.squashfs sysupgrade-xiaomi_r3d/root ; tar -cf "../$OUTPUT_FIRMWARE" sysupgrade-xiaomi_r3d/ ; cd .. ; ls -lh "$OUTPUT_FIRMWARE"
+      run: |
+        cd firmware_work
+        # 创建新的 squashfs 根文件系统
+        mksquashfs rootfs new_rootfs.squashfs -comp xz -b 1048576 -Xdict-size 100% -noappend -always-use-fragments
+        # 备份原始 root
+        cp sysupgrade-xiaomi_r3d/root sysupgrade-xiaomi_r3d/root.original
+        # 替换为新的 root
+        mv new_rootfs.squashfs sysupgrade-xiaomi_r3d/root
+        # 确保 CONTROL 文件存在（从原始固件保留）
+        if [ -f sysupgrade-xiaomi_r3d/CONTROL ]; then
+          echo "CONTROL file exists, content:"
+          cat sysupgrade-xiaomi_r3d/CONTROL
+        else
+          echo "WARNING: CONTROL file missing!"
+        fi
+        # 重新打包，保留所有文件权限
+        tar -cf "../$OUTPUT_FIRMWARE" sysupgrade-xiaomi_r3d/
+        cd ..
+        ls -lh "$OUTPUT_FIRMWARE"
+        # 验证打包内容
+        echo "=== Verifying firmware contents ==="
+        tar -tvf "$OUTPUT_FIRMWARE"
 
     - name: Generate Checksum
       run: sha256sum "$OUTPUT_FIRMWARE" > "${OUTPUT_FIRMWARE}.sha256" ; cat "${OUTPUT_FIRMWARE}.sha256"
@@ -71,7 +92,7 @@ jobs:
     - name: Upload Firmware
       uses: actions/upload-artifact@v4
       with:
-        name: kwrt-router-mode-firmware-v7
+        name: kwrt-router-mode-firmware-v8
         path: |
           ${{ env.OUTPUT_FIRMWARE }}
           ${{ env.OUTPUT_FIRMWARE }}.sha256
