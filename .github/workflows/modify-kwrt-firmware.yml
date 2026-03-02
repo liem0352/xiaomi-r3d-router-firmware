@@ -10,8 +10,9 @@ on:
 
 env:
   OUTPUT_FIRMWARE: "kwrt-02.22.2026-r3d-router-mode-sysupgrade.bin"
-  NETWORK_CONFIG_BASE64: "Y29uZmlnIGludGVyZmFjZSAnbG9vcGJhY2snCiAgICBvcHRpb24gZGV2aWNlICdsbycKICAgIG9wdGlvbiBwcm90byAnc3RhdGljJwogICAgb3B0aW9uIGlwYWRkciAnMTI3LjAuMC4xJwogICAgb3B0aW9uIG5ldG1hc2sgJzI1NS4wLjAuMCcKCmNvbmZpZyBnbG9iYWxzICdnbG9iYWxzJwogICAgb3B0aW9uIHVsYV9wcmVmaXcgJ2F1dG8nCgpjb25maWcgaW50ZXJmYWNlICd3YW4nCiAgICBvcHRpb24gZGV2aWNlICdldGgwJwogICAgb3B0aW9uIHByb3RvICdkaGNwJwogICAgb3B0aW9uIGlwdjYgJ2F1dG8nCgpjb25maWcgaW50ZXJmYWNlICd3YW42JwogICAgb3B0aW9uIGRldmljZSAnQHdhbicKICAgIG9wdGlvbiBwcm90byAnZGhjcHY2JwoKY29uZmlnIGludGVyZmFjZSAnbGFuJwogICAgb3B0aW9uIGRldmljZSAnYnItbGFuJwogICAgb3B0aW9uIHByb3RvICdzdGF0aWMnCiAgICBvcHRpb24gaXBhZGRyICcxOTIuMTY4LjEuMScKICAgIG9wdGlvbiBuZXRtYXNrICcyNTUuMjU1LjI1NS4wJwogICAgb3B0aW9uIGlwNmFzc2lnbic2MCcKCmNvbmZpZyBkZXZpY2UKICAgIG9wdGlvbiBuYW1lICdici1sYW4nCiAgICBvcHRpb24gdHlwZSAnYnJpZGdlJwogICAgbGlzdCBwb3J0cyAnZXRoMScKICAgIGxpc3QgcG9ydHMgJ2V0aDInCiAgICBsaXN0IHBvcnRzICdldGgzJwoKY29uZmlnIGRoY3AgJ2xhbicKICAgIG9wdGlvbiBpbnRlcmZhY2UgJ2xhbicKICAgIG9wdGlvbiBzdGFydCAnMTAwJwogICAgb3B0aW9uIGxpbWl0ICcxNTAnCiAgICBvcHRpb24gbGVhc2V0aW1lICcxMmgnCiAgICBvcHRpb24gaWdub3JlICcwJwoKY29uZmlnIGRoY3AgJ3dhbicKICAgIG9wdGlvbiBpbnRlcmZhY2UgJ3dhbicKICAgIG9wdGlvbiBpZ25vcmUgJzEnCg=="
+  NETWORK_CONFIG_BASE64: "Y29uZmlnIGludGVyZmFjZSAnbG9vcGJhY2snCiAgICBvcHRpb24gZGV2aWNlICdsbycKICAgIG9wdGlvbiBwcm90byAnc3RhdGljJwogICAgb3B0aW9uIGlwYWRkciAnMTI3LjAuMC4xJwogICAgb3B0aW9uIG5ldG1hc2sgJzI1NS4wLjAuMCcKCmNvbmZpZyBnbG9iYWxzICdnbG9iYWxzJwogICAgb3B0aW9uIHVsYV9wcmVmaXggJ2F1dG8nCgpjb25maWcgaW50ZXJmYWNlICd3YW4nCiAgICBvcHRpb24gZGV2aWNlICdldGgwJwogICAgb3B0aW9uIHByb3RvICdkaGNwJwogICAgb3B0aW9uIGlwdjYgJ2F1dG8nCgpjb25maWcgaW50ZXJmYWNlICd3YW42JwogICAgb3B0aW9uIGRldmljZSAnQHdhbicKICAgIG9wdGlvbiBwcm90byAnZGhjcHY2JwoKY29uZmlnIGludGVyZmFjZSAnbGFuJwogICAgb3B0aW9uIGRldmljZSAnYnItbGFuJwogICAgb3B0aW9uIHByb3RvICdzdGF0aWMnCiAgICBvcHRpb24gaXBhZGRyICcxOTIuMTY4LjEuMScKICAgIG9wdGlvbiBuZXRtYXNrICcyNTUuMjU1LjI1NS4wJwogICAgb3B0aW9uIGlwNmFzc2lnbic2MCcKCmNvbmZpZyBkZXZpY2UKICAgIG9wdGlvbiBuYW1lICdici1sYW4nCiAgICBvcHRpb24gdHlwZSAnYnJpZGdlJwogICAgbGlzdCBwb3J0cyAnZXRoMScKICAgIGxpc3QgcG9ydHMgJ2V0aDInCiAgICBsaXN0IHBvcnRzICdldGgzJwoKY29uZmlnIGRoY3AgJ2xhbicKICAgIG9wdGlvbiBpbnRlcmZhY2UgJ2xhbicKICAgIG9wdGlvbiBzdGFydCAnMTAwJwogICAgb3B0aW9uIGxpbWl0ICcxNTAnCiAgICBvcHRpb24gbGVhc2V0aW1lICcxMmgnCiAgICBvcHRpb24gaWdub3JlICcwJwoKY29uZmlnIGRoY3AgJ3dhbicKICAgIG9wdGlvbiBpbnRlcmZhY2UgJ3dhbicKICAgIG9wdGlvbiBpZ25vcmUgJzEnCg=="
   FIREWALL_CONFIG_BASE64: "Y29uZmlnIGRlZmF1bHRzCiAgICBvcHRpb24gc3luX2Zsb29kICcxJwogICAgb3B0aW9uIGlucHV0ICdSRUpFQ1QnCiAgICBvcHRpb24gb3V0cHV0ICdBQ0NFUFQnCiAgICBvcHRpb24gZm9yd2FyZCAnUkVKRUNUJwoKY29uZmlnIHpvbmUKICAgIG9wdGlvbiBuYW1lICdsYW4nCiAgICBsaXN0IG5ldHdvcmsgJ2xhbicKICAgIG9wdGlvbiBpbnB1dCAnQUNDRVBUJwogICAgb3B0aW9uIG91dHB1dCAnQUNDRVBUJwogICAgb3B0aW9uIGZvcndhcmQgJ0FDQ0VQVCcKCmNvbmZpZyB6b25lCiAgICBvcHRpb24gbmFtZSAnd2FuJwogICAgbGlzdCBuZXR3b3JrICd3YW4nCiAgICBsaXN0IG5ldHdvcmsgJ3dhbjYnCiAgICBvcHRpb24gaW5wdXQgJ1JFSkVDVCcKICAgIG9wdGlvbiBvdXRwdXQgJ0FDQ0VQVCcKICAgIG9wdGlvbiBmb3J3YXJkICdSRUpFQ1QnCiAgICBvcHRpb24gbWFzcSAnMScKICAgIG9wdGlvbiBtdHVfZml4ICcxJwoKY29uZmlnIGZvcndhcmRpbmcKICAgIG9wdGlvbiBzcmMgJ2xhbicKICAgIG9wdGlvbiBkZXN0ICd3YW4nCg=="
+  UCI_DEFAULTS_BASE64: "IyEvYmluL3NoCgp1Y2kgc2V0IG5ldHdvcmsubGFuLmlwYWRkcj0xOTIuMTY4LjEuMQp1Y2kgc2V0IG5ldHdvcmsubGFuLm5ldG1hc2s9MjU1LjI1NS4yNTUuMAp1Y2kgc2V0IG5ldHdvcmsuYnItbGFuLnBvcnRzPSdldGgxZXRoMmV0aDMnCnVjaSBzZXQgZGhjcC5sYW4uaWdub3JlPTAKdWNpIGNvbW1pdCBuZXR3b3JrCnVjaSBjb21taXQgZGhjcAoKZXhpdCAw"
 
 jobs:
   modify:
@@ -52,6 +53,14 @@ jobs:
         echo ""
         echo "=== New firewall config ==="
         cat rootfs/etc/config/firewall
+        
+        echo ""
+        echo "=== Creating uci-defaults script ==="
+        mkdir -p rootfs/etc/uci-defaults
+        echo "${UCI_DEFAULTS_BASE64}" | base64 -d > rootfs/etc/uci-defaults/99-router-mode
+        chmod +x rootfs/etc/uci-defaults/99-router-mode
+        echo "Created uci-defaults script:"
+        cat rootfs/etc/uci-defaults/99-router-mode
 
     - name: Repack Firmware
       run: cd firmware_work ; mksquashfs rootfs new_rootfs.squashfs -comp xz -b 1048576 -Xdict-size 100% -noappend -always-use-fragments ; cp sysupgrade-xiaomi_r3d/root sysupgrade-xiaomi_r3d/root.original ; mv new_rootfs.squashfs sysupgrade-xiaomi_r3d/root ; tar -cf "../$OUTPUT_FIRMWARE" sysupgrade-xiaomi_r3d/ ; cd .. ; ls -lh "$OUTPUT_FIRMWARE"
@@ -62,7 +71,7 @@ jobs:
     - name: Upload Firmware
       uses: actions/upload-artifact@v4
       with:
-        name: kwrt-router-mode-firmware-v6
+        name: kwrt-router-mode-firmware-v7
         path: |
           ${{ env.OUTPUT_FIRMWARE }}
           ${{ env.OUTPUT_FIRMWARE }}.sha256
