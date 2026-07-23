@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" role="img" aria-labelledby="ps pd">
+  <title id="ps">问题与解决</title>
+  <desc id="pd">左侧 Kwrt AP 模式四个问题:电脑无法获取 IP、WiFi 开放跟随上级 IP、无法作为独立路由器、恢复出厂丢失配置。右侧本固件路由模式四个解决:DHCP 启用、WiFi 默认 WPA2 加密、镜像层预配置独立路由器、uci-defaults 每次恢复出厂后重写。</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #0E1419; }
+      .panel { fill: #1A2230; }
+      .panel2 { fill: #141A24; }
+      .fg { fill: #E8E4D9; }
+      .orange { fill: #F89406; }
+      .blue { fill: #4A9EFF; }
+      .muted { fill: #6B7280; }
+      .so { stroke: #F89406; }
+      .sb { stroke: #4A9EFF; }
+      .sm { stroke: #6B7280; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="320" rx="20" />
+
+  <g transform="translate(56 36)">
+    <text class="sans fg" x="0" y="32" font-size="32" font-weight="700">问题与解决</text>
+    <text class="sans muted" x="0" y="62" font-size="16">Kwrt 默认 AP 模式带来四个问题,本固件在镜像层逐一解决</text>
+  </g>
+
+  <g transform="translate(56 130)">
+    <rect class="panel so" x="0" y="0" width="540" height="160" rx="8" stroke-width="1.5" />
+    <text class="mono orange" x="20" y="30" font-size="13" font-weight="600" letter-spacing="1">KWRT AP 模式问题</text>
+    <line class="so" x1="20" y1="42" x2="120" y2="42" stroke-width="2" />
+
+    <rect class="orange" x="20" y="62" width="3" height="14" />
+    <text class="sans fg" x="32" y="74" font-size="14">电脑无法获取 IP,DHCP 未启用</text>
+
+    <rect class="orange" x="20" y="86" width="3" height="14" />
+    <text class="sans fg" x="32" y="98" font-size="14">WiFi 开放,跟随上级路由 IP 段</text>
+
+    <rect class="orange" x="20" y="110" width="3" height="14" />
+    <text class="sans fg" x="32" y="122" font-size="14">无法作为独立路由器使用</text>
+
+    <rect class="orange" x="20" y="134" width="3" height="14" />
+    <text class="sans fg" x="32" y="146" font-size="14">恢复出厂后丢失路由配置</text>
+  </g>
+
+  <g transform="translate(604 130)">
+    <rect class="panel sb" x="0" y="0" width="540" height="160" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="20" y="30" font-size="13" font-weight="600" letter-spacing="1">本固件路由模式解决</text>
+    <line class="sb" x1="20" y1="42" x2="120" y2="42" stroke-width="2" />
+
+    <rect class="blue" x="20" y="62" width="3" height="14" />
+    <text class="sans fg" x="32" y="74" font-size="14">DHCP 启用,接上即获 192.168.1.x</text>
+
+    <rect class="blue" x="20" y="86" width="3" height="14" />
+    <text class="sans fg" x="32" y="98" font-size="14">WiFi 默认 WPA2-PSK 加密</text>
+
+    <rect class="blue" x="20" y="110" width="3" height="14" />
+    <text class="sans fg" x="32" y="122" font-size="14">镜像层预配置为独立路由器</text>
+
+    <rect class="blue" x="20" y="134" width="3" height="14" />
+    <text class="sans fg" x="32" y="146" font-size="14">uci-defaults 每次恢复出厂后重写</text>
+  </g>
+</svg>

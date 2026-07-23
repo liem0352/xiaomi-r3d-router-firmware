@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" role="img" aria-labelledby="fs fd4">
+  <title id="fs">刷机步骤</title>
+  <desc id="fd4">刷机五步:网线连接电脑到 R3D LAN 口、SSH 登录 root@192.168.1.1、scp 上传 firmware.bin 到 /tmp/、sysupgrade -n 不保留旧配置刷机、等待重启约 2-3 分钟。</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #0E1419; }
+      .panel { fill: #1A2230; }
+      .panel2 { fill: #141A24; }
+      .fg { fill: #E8E4D9; }
+      .orange { fill: #F89406; }
+      .blue { fill: #4A9EFF; }
+      .muted { fill: #6B7280; }
+      .so { stroke: #F89406; }
+      .sb { stroke: #4A9EFF; }
+      .sm { stroke: #6B7280; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="320" rx="20" />
+
+  <g transform="translate(56 36)">
+    <text class="sans fg" x="0" y="32" font-size="32" font-weight="700">刷机步骤</text>
+    <text class="sans muted" x="0" y="62" font-size="16">从构建产物到路由器运行新固件,五步完成</text>
+  </g>
+
+  <g transform="translate(56 140)">
+    <rect class="panel so" x="0" y="0" width="190" height="120" rx="8" stroke-width="1.5" />
+    <text class="mono orange" x="14" y="28" font-size="11" font-weight="600">STEP</text>
+    <text class="sans fg" x="14" y="58" font-size="16" font-weight="600">接 LAN 口</text>
+    <line class="sm" x1="14" y1="72" x2="176" y2="72" stroke-width="1" />
+    <text class="sans muted" x="14" y="92" font-size="13">网线连接电脑到</text>
+    <text class="sans muted" x="14" y="110" font-size="13">R3D LAN 口</text>
+
+    <line class="so" x1="190" y1="60" x2="216" y2="60" stroke-width="1.5" />
+    <polygon class="orange" points="216,56 224,60 216,64" />
+
+    <rect class="panel sb" x="226" y="0" width="190" height="120" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="240" y="28" font-size="11" font-weight="600">STEP</text>
+    <text class="sans fg" x="240" y="58" font-size="16" font-weight="600">SSH 登录</text>
+    <line class="sm" x1="240" y1="72" x2="402" y2="72" stroke-width="1" />
+    <text class="mono muted" x="240" y="92" font-size="11">ssh root@192.168.1.1</text>
+    <text class="sans muted" x="240" y="110" font-size="12">root 默认空密码</text>
+
+    <line class="sb" x1="416" y1="60" x2="442" y2="60" stroke-width="1.5" />
+    <polygon class="blue" points="442,56 450,60 442,64" />
+
+    <rect class="panel sb" x="452" y="0" width="190" height="120" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="466" y="28" font-size="11" font-weight="600">STEP</text>
+    <text class="sans fg" x="466" y="58" font-size="16" font-weight="600">scp 上传</text>
+    <line class="sm" x1="466" y1="72" x2="628" y2="72" stroke-width="1" />
+    <text class="mono muted" x="466" y="92" font-size="10">scp firmware.bin</text>
+    <text class="mono muted" x="466" y="108" font-size="10">root@192.168.1.1:/tmp/</text>
+
+    <line class="sb" x1="642" y1="60" x2="668" y2="60" stroke-width="1.5" />
+    <polygon class="blue" points="668,56 676,60 668,64" />
+
+    <rect class="panel so" x="678" y="0" width="190" height="120" rx="8" stroke-width="1.5" />
+    <text class="mono orange" x="692" y="28" font-size="11" font-weight="600">STEP</text>
+    <text class="sans fg" x="692" y="58" font-size="16" font-weight="600">sysupgrade</text>
+    <line class="sm" x1="692" y1="72" x2="854" y2="72" stroke-width="1" />
+    <text class="mono muted" x="692" y="92" font-size="10">sysupgrade -n</text>
+    <text class="mono muted" x="692" y="108" font-size="10">/tmp/firmware.bin</text>
+
+    <line class="so" x1="868" y1="60" x2="894" y2="60" stroke-width="1.5" />
+    <polygon class="orange" points="894,56 902,60 894,64" />
+
+    <rect class="panel so" x="904" y="0" width="190" height="120" rx="8" stroke-width="1.5" />
+    <text class="mono orange" x="918" y="28" font-size="11" font-weight="600">STEP</text>
+    <text class="sans fg" x="918" y="58" font-size="16" font-weight="600">等待重启</text>
+    <line class="sm" x1="918" y1="72" x2="1080" y2="72" stroke-width="1" />
+    <text class="sans muted" x="918" y="92" font-size="13">约 2-3 分钟,</text>
+    <text class="sans muted" x="918" y="110" font-size="13">LED 转绿即完成</text>
+  </g>
+</svg>

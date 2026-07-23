@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 140" width="100%" role="img" aria-labelledby="bt bd">
   <title id="bt">构建方法</title>
-  <desc id="bd">四种构建路径：Docker、WSL、GitHub Actions 云构建、Linux 本地构建。</desc>
+  <desc id="bd">四种构建路径:Docker、WSL、GitHub Actions 云构建、Linux 本地构建。</desc>
 
   <defs>
     <style>
@@ -15,35 +15,27 @@
     </style>
   </defs>
 
-  <!-- 背景 -->
-  <rect class="bg" x="0" y="0" width="1200" height="140" rx="16" />
+  <rect class="bg" x="0" y="0" width="1200" height="140" rx="20" />
 
-  <!-- 左侧标题 -->
   <g transform="translate(56 0)">
-    <text class="mono orange" x="0" y="38" font-size="13" letter-spacing="2">SECTION · 04</text>
-    <text class="sans fg" x="0" y="80" font-size="36" font-weight="700">构建方法</text>
-    <text class="sans muted" x="0" y="108" font-size="16">四条构建路径，任选其一产出可刷固件</text>
+    <text class="sans fg" x="0" y="68" font-size="36" font-weight="700">构建方法</text>
+    <text class="sans muted" x="0" y="100" font-size="16">四条构建路径,任选其一产出可刷固件</text>
   </g>
 
-  <!-- 右侧 4 个方法标签 -->
   <g transform="translate(680 40)">
-    <!-- Docker -->
-    <rect class="panel" x="0" y="0" width="110" height="60" rx="8" stroke="#F89406" stroke-width="1.5" />
+    <rect class="panel" x="0" y="0" width="110" height="60" rx="6" stroke="#F89406" stroke-width="1.5" />
     <text class="mono orange" x="55" y="28" font-size="13" text-anchor="middle" font-weight="600">Docker</text>
     <text class="mono muted" x="55" y="46" font-size="9" text-anchor="middle">docker-build.sh</text>
 
-    <!-- WSL -->
-    <rect class="panel" x="130" y="0" width="110" height="60" rx="8" stroke="#F89406" stroke-width="1.5" />
+    <rect class="panel" x="130" y="0" width="110" height="60" rx="6" stroke="#F89406" stroke-width="1.5" />
     <text class="mono orange" x="185" y="28" font-size="13" text-anchor="middle" font-weight="600">WSL</text>
     <text class="mono muted" x="185" y="46" font-size="9" text-anchor="middle">wsl-build.sh</text>
 
-    <!-- Actions -->
-    <rect class="panel" x="260" y="0" width="110" height="60" rx="8" stroke="#4A9EFF" stroke-width="1.5" />
+    <rect class="panel" x="260" y="0" width="110" height="60" rx="6" stroke="#4A9EFF" stroke-width="1.5" />
     <text class="mono blue" x="315" y="28" font-size="13" text-anchor="middle" font-weight="600">Actions</text>
     <text class="mono muted" x="315" y="46" font-size="9" text-anchor="middle">cloud build</text>
 
-    <!-- Linux -->
-    <rect class="panel" x="390" y="0" width="110" height="60" rx="8" stroke="#4A9EFF" stroke-width="1.5" />
+    <rect class="panel" x="390" y="0" width="110" height="60" rx="6" stroke="#4A9EFF" stroke-width="1.5" />
     <text class="mono blue" x="445" y="28" font-size="13" text-anchor="middle" font-weight="600">Linux</text>
     <text class="mono muted" x="445" y="46" font-size="9" text-anchor="middle">ImageBuilder</text>
   </g>

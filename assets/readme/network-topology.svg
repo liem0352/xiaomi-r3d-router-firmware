@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" role="img" aria-labelledby="nt nd">
+  <title id="nt">网络拓扑</title>
+  <desc id="nd">小米 R3D 路由模式网络拓扑:光猫入户接 R3D WAN eth0 DHCP,R3D LAN 192.168.1.1 桥接 br-lan,DHCP 100-250,下联 PC、交换机、设备,WiFi 5G/2.4G 双频 WPA2 加密。</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #0E1419; }
+      .panel { fill: #1A2230; }
+      .panel2 { fill: #141A24; }
+      .fg { fill: #E8E4D9; }
+      .orange { fill: #F89406; }
+      .blue { fill: #4A9EFF; }
+      .muted { fill: #6B7280; }
+      .so { stroke: #F89406; }
+      .sb { stroke: #4A9EFF; }
+      .sm { stroke: #6B7280; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="360" rx="20" />
+
+  <g transform="translate(56 36)">
+    <text class="sans fg" x="0" y="32" font-size="32" font-weight="700">网络拓扑</text>
+    <text class="sans muted" x="0" y="62" font-size="16">光猫入户 → R3D WAN eth0 DHCP → LAN br-lan 192.168.1.1 → 下联设备</text>
+  </g>
+
+  <g transform="translate(360 130)">
+    <rect class="panel sb" x="160" y="0" width="220" height="40" rx="6" stroke-width="1.5" />
+    <text class="mono blue" x="270" y="25" font-size="13" text-anchor="middle">光猫 / 入户网线</text>
+
+    <line class="sb" x1="270" y1="40" x2="270" y2="78" stroke-width="1.5" />
+    <text class="mono blue" x="262" y="64" font-size="11" text-anchor="end">WAN eth0 · DHCP 客户端</text>
+
+    <rect class="panel so" x="160" y="78" width="220" height="120" rx="8" stroke-width="1.5" />
+    <text class="mono orange" x="270" y="116" font-size="28" font-weight="700" text-anchor="middle">R3D</text>
+    <text class="mono fg" x="270" y="142" font-size="14" text-anchor="middle">LAN 192.168.1.1</text>
+    <text class="mono muted" x="270" y="164" font-size="11" text-anchor="middle">br-lan · 4 ports</text>
+
+    <g transform="translate(160 180)">
+      <rect class="so" x="10" y="0" width="36" height="14" rx="2" stroke-width="1" fill="#0E1419" />
+      <rect class="so" x="68" y="0" width="36" height="14" rx="2" stroke-width="1" fill="#0E1419" />
+      <rect class="so" x="126" y="0" width="36" height="14" rx="2" stroke-width="1" fill="#0E1419" />
+      <rect class="so" x="184" y="0" width="36" height="14" rx="2" stroke-width="1" fill="#0E1419" />
+      <text class="mono muted" x="28" y="26" font-size="9" text-anchor="middle">eth0</text>
+      <text class="mono muted" x="86" y="26" font-size="9" text-anchor="middle">eth1</text>
+      <text class="mono muted" x="144" y="26" font-size="9" text-anchor="middle">eth2</text>
+      <text class="mono muted" x="202" y="26" font-size="9" text-anchor="middle">eth3</text>
+    </g>
+
+    <line class="sb" x1="246" y1="220" x2="120" y2="250" stroke-width="1.5" />
+    <line class="sb" x1="270" y1="220" x2="270" y2="250" stroke-width="1.5" />
+    <line class="sb" x1="294" y1="220" x2="420" y2="250" stroke-width="1.5" />
+
+    <rect class="panel sb" x="40" y="250" width="160" height="40" rx="6" stroke-width="1.5" />
+    <text class="mono blue" x="120" y="275" font-size="12" text-anchor="middle">PC</text>
+
+    <rect class="panel sb" x="190" y="250" width="160" height="40" rx="6" stroke-width="1.5" />
+    <text class="mono blue" x="270" y="275" font-size="12" text-anchor="middle">交换机</text>
+
+    <rect class="panel sb" x="340" y="250" width="160" height="40" rx="6" stroke-width="1.5" />
+    <text class="mono blue" x="420" y="275" font-size="12" text-anchor="middle">设备</text>
+  </g>
+
+  <g transform="translate(56 250)">
+    <rect class="panel2 sm" x="0" y="0" width="240" height="76" rx="6" stroke-width="1" />
+    <text class="mono muted" x="12" y="20" font-size="10">WIFI 5G</text>
+    <text class="mono fg" x="12" y="40" font-size="13">Xiaomi_R3D_5G</text>
+    <text class="mono muted" x="12" y="58" font-size="10">WPA2-PSK · 12345678</text>
+
+    <rect class="panel2 sm" x="0" y="84" width="240" height="40" rx="6" stroke-width="1" />
+    <text class="mono muted" x="12" y="102" font-size="10">WIFI 2.4G</text>
+    <text class="mono fg" x="12" y="118" font-size="13">Xiaomi_R3D_2.4G</text>
+  </g>
+
+  <g transform="translate(900 250)">
+    <rect class="panel2 sm" x="0" y="0" width="240" height="76" rx="6" stroke-width="1" />
+    <text class="mono muted" x="12" y="20" font-size="10">DHCP 服务器</text>
+    <text class="mono orange" x="12" y="44" font-size="14">启用</text>
+    <text class="mono fg" x="12" y="64" font-size="12">192.168.1.100 - 250</text>
+  </g>
+</svg>

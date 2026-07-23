@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" role="img" aria-labelledby="cf cd">
+  <title id="cf">配置文件结构</title>
+  <desc id="cd">r3d_router_config 目录结构:etc/config/network(WAN eth0 DHCP / LAN br-lan 192.168.1.1)、firewall(NAT 启用 / LAN→WAN 允许)、dhcp(DHCP 服务器启用),etc/uci-defaults/99-router-mode 首次启动自动配置脚本,以及构建入口 docker-build.sh、wsl-build.sh、.github/workflows/、修复脚本 fix_r3d_router_mode.sh。</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #0E1419; }
+      .panel { fill: #1A2230; }
+      .panel2 { fill: #141A24; }
+      .fg { fill: #E8E4D9; }
+      .orange { fill: #F89406; }
+      .blue { fill: #4A9EFF; }
+      .muted { fill: #6B7280; }
+      .so { stroke: #F89406; }
+      .sb { stroke: #4A9EFF; }
+      .sm { stroke: #6B7280; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="360" rx="20" />
+
+  <g transform="translate(56 36)">
+    <text class="sans fg" x="0" y="32" font-size="32" font-weight="700">配置文件结构</text>
+    <text class="sans muted" x="0" y="62" font-size="16">镜像构建阶段打包进固件,首次启动即生效,恢复出厂后由 uci-defaults 重写</text>
+  </g>
+
+  <g transform="translate(56 130)">
+    <rect class="panel sm" x="0" y="0" width="640" height="200" rx="8" stroke-width="1" />
+    <text class="mono orange" x="20" y="28" font-size="13" font-weight="600">r3d_router_config/</text>
+
+    <text class="mono muted" x="20" y="54" font-size="13">└─ etc/</text>
+    <text class="mono muted" x="44" y="76" font-size="13">├─ config/</text>
+
+    <text class="mono fg" x="100" y="76" font-size="13">network</text>
+    <text class="mono muted" x="220" y="76" font-size="12">WAN eth0 DHCP / LAN br-lan 192.168.1.1</text>
+
+    <text class="mono fg" x="100" y="98" font-size="13">firewall</text>
+    <text class="mono muted" x="220" y="98" font-size="12">NAT 启用 / LAN→WAN 允许转发</text>
+
+    <text class="mono fg" x="100" y="120" font-size="13">dhcp</text>
+    <text class="mono muted" x="220" y="120" font-size="12">DHCP 服务器启用 · 池 100-250</text>
+
+    <text class="mono muted" x="44" y="146" font-size="13">└─ uci-defaults/</text>
+    <text class="mono orange" x="180" y="146" font-size="13" font-weight="600">99-router-mode</text>
+    <text class="mono muted" x="360" y="146" font-size="12">首次启动自动配置路由模式</text>
+
+    <line class="sm" x1="20" y1="164" x2="620" y2="164" stroke-width="1" stroke-dasharray="2 4" />
+    <text class="mono blue" x="20" y="186" font-size="12">标记文件</text>
+    <text class="mono fg" x="100" y="186" font-size="12">/etc/.r3d_router_mode_done</text>
+    <text class="mono muted" x="320" y="186" font-size="11">已配置则跳过,避免重复执行</text>
+  </g>
+
+  <g transform="translate(720 130)">
+    <text class="mono blue" x="0" y="14" font-size="12" letter-spacing="1">BUILD & FIX SCRIPTS</text>
+
+    <rect class="panel2 so" x="0" y="26" width="424" height="44" rx="6" stroke-width="1" />
+    <text class="mono orange" x="14" y="52" font-size="13" font-weight="600">docker-build.sh</text>
+    <text class="mono muted" x="170" y="52" font-size="11">Docker 构建入口</text>
+
+    <rect class="panel2 so" x="0" y="80" width="424" height="44" rx="6" stroke-width="1" />
+    <text class="mono orange" x="14" y="106" font-size="13" font-weight="600">wsl-build.sh</text>
+    <text class="mono muted" x="170" y="106" font-size="11">WSL 构建入口 · Windows 推荐</text>
+
+    <rect class="panel2 sb" x="0" y="134" width="424" height="44" rx="6" stroke-width="1" />
+    <text class="mono blue" x="14" y="160" font-size="13" font-weight="600">.github/workflows/</text>
+    <text class="mono muted" x="220" y="160" font-size="11">GitHub Actions 云构建</text>
+
+    <rect class="panel2 sb" x="0" y="188" width="424" height="44" rx="6" stroke-width="1" />
+    <text class="mono blue" x="14" y="214" font-size="13" font-weight="600">fix_r3d_router_mode.sh</text>
+    <text class="mono muted" x="240" y="214" font-size="11">已刷固件快速修复</text>
+  </g>
+</svg>
