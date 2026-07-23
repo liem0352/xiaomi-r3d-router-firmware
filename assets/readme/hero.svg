@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="100%" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">小米 R3D OpenWrt 路由模式固件</title>
+  <desc id="heroDesc">预配置为路由模式的小米 R3D OpenWrt 固件，首次启动即为独立路由器，恢复出厂后仍保持路由模式。默认 LAN 192.168.1.1，DHCP 启用，WiFi 加密。</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #0E1419; }
+      .panel { fill: #1A2230; }
+      .fg { fill: #E8E4D9; }
+      .orange { fill: #F89406; }
+      .blue { fill: #4A9EFF; }
+      .muted { fill: #6B7280; }
+      .so { stroke: #F89406; }
+      .sb { stroke: #4A9EFF; }
+      .sm { stroke: #6B7280; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; }
+    </style>
+  </defs>
+
+  <!-- 背景 -->
+  <rect class="bg" x="0" y="0" width="1200" height="380" rx="26" />
+
+  <!-- 左侧标题块 -->
+  <g transform="translate(56 40)">
+    <text class="mono orange" x="0" y="20" font-size="14" letter-spacing="2">OPENWRT · ROUTER FIRMWARE</text>
+    <text class="sans fg" x="0" y="78" font-size="44" font-weight="700">小米 R3D 路由模式固件</text>
+    <text class="sans muted" x="0" y="112" font-size="18">OpenWrt 23.05 · 预配置路由模式 · 恢复出厂保持</text>
+    <text class="mono muted" x="0" y="142" font-size="14">LAN 192.168.1.1 · DHCP · WiFi 加密</text>
+  </g>
+
+  <!-- 右侧路由器网络拓扑图 -->
+  <g transform="translate(720 40)">
+    <!-- 顶部光猫节点 -->
+    <rect class="panel sb" x="120" y="0" width="180" height="40" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="210" y="25" font-size="12" text-anchor="middle">光猫 / 入户网线</text>
+
+    <!-- WAN 线: 光猫 -> 路由器 eth0 -->
+    <line class="sb" x1="210" y1="40" x2="210" y2="70" stroke-width="1.5" />
+    <text class="mono blue" x="202" y="59" font-size="10" text-anchor="end">WAN · eth0 · DHCP</text>
+
+    <!-- 中间路由器节点 -->
+    <rect class="panel so" x="120" y="70" width="180" height="100" rx="8" stroke-width="1.5" />
+    <text class="mono orange" x="210" y="104" font-size="24" font-weight="700" text-anchor="middle">R3D</text>
+    <text class="mono fg" x="210" y="124" font-size="12" text-anchor="middle">192.168.1.1</text>
+
+    <!-- 4 个端口方块 (底部, 标 eth0/1/2/3) -->
+    <text class="mono muted" x="150" y="146" font-size="8" text-anchor="middle">eth0</text>
+    <text class="mono muted" x="190" y="146" font-size="8" text-anchor="middle">eth1</text>
+    <text class="mono muted" x="230" y="146" font-size="8" text-anchor="middle">eth2</text>
+    <text class="mono muted" x="270" y="146" font-size="8" text-anchor="middle">eth3</text>
+    <rect class="so" x="140" y="150" width="20" height="12" rx="2" stroke-width="1" fill="#0E1419" />
+    <rect class="so" x="180" y="150" width="20" height="12" rx="2" stroke-width="1" fill="#0E1419" />
+    <rect class="so" x="220" y="150" width="20" height="12" rx="2" stroke-width="1" fill="#0E1419" />
+    <rect class="so" x="260" y="150" width="20" height="12" rx="2" stroke-width="1" fill="#0E1419" />
+
+    <!-- LAN 线: 路由器 eth1/2/3 -> 设备 -->
+    <line class="sb" x1="190" y1="170" x2="80" y2="200" stroke-width="1.5" />
+    <line class="sb" x1="230" y1="170" x2="220" y2="200" stroke-width="1.5" />
+    <line class="sb" x1="270" y1="170" x2="360" y2="200" stroke-width="1.5" />
+
+    <!-- 底部 3 个设备节点 -->
+    <rect class="panel sb" x="20" y="200" width="120" height="40" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="80" y="225" font-size="11" text-anchor="middle">PC</text>
+
+    <rect class="panel sb" x="160" y="200" width="120" height="40" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="220" y="225" font-size="11" text-anchor="middle">交换机</text>
+
+    <rect class="panel sb" x="300" y="200" width="120" height="40" rx="8" stroke-width="1.5" />
+    <text class="mono blue" x="360" y="225" font-size="11" text-anchor="middle">设备</text>
+
+    <!-- 右上角标注框: SSID / PWD / DHCP -->
+    <rect class="panel sm" x="300" y="0" width="120" height="60" rx="8" stroke-width="1" stroke-dasharray="3 3" />
+    <text class="mono fg" x="308" y="16" font-size="9">SSID: Xiaomi_R3D_5G</text>
+    <text class="mono fg" x="308" y="32" font-size="9">PWD: 12345678</text>
+    <text class="mono fg" x="308" y="48" font-size="9">DHCP: 100-250</text>
+  </g>
+
+  <!-- 底部署名 -->
+  <text class="mono muted" x="56" y="360" font-size="12">OpenWrt 23.05.5 · GPL v2 · 作者 liem</text>
+</svg>
